@@ -3,35 +3,42 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 export default function AddProduct() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
-    title: "",
+    name: "",
     description: "",
-    price: ""
+    price: "",
+    category: ""
   });
 
- const submit = async (e) => {
-  e.preventDefault();
+  const submit = async (e) => {
+    e.preventDefault();
 
-  await api.post("/products", form);
+    try {
+      await api.post("/api/products", {
+        name: form.name,
+        description: form.description,
+        price: Number(form.price),
+        category: form.category || "General"
+      });
 
-  alert("Product added successfully");
-
-  navigate("/products");
-};
+      alert("Product added successfully");
+      navigate("/products");
+    } catch (err) {
+      console.error("Add product error:", err);
+      alert("Failed to add product");
+    }
+  };
 
   return (
-    <form
-      onSubmit={submit}
-      className="max-w-md mx-auto p-6 space-y-4"
-    >
+    <form onSubmit={submit} className="max-w-md mx-auto p-6 space-y-4">
+
       <input
-        placeholder="Title"
+        placeholder="Product Name"
         className="border p-2 w-full"
-        value={form.title}
-        onChange={(e) =>
-          setForm({ ...form, title: e.target.value })
-        }
+        value={form.name}
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
         required
       />
 
@@ -39,9 +46,7 @@ export default function AddProduct() {
         placeholder="Description"
         className="border p-2 w-full"
         value={form.description}
-        onChange={(e) =>
-          setForm({ ...form, description: e.target.value })
-        }
+        onChange={(e) => setForm({ ...form, description: e.target.value })}
         required
       />
 
@@ -50,10 +55,15 @@ export default function AddProduct() {
         type="number"
         className="border p-2 w-full"
         value={form.price}
-        onChange={(e) =>
-          setForm({ ...form, price: e.target.value })
-        }
+        onChange={(e) => setForm({ ...form, price: e.target.value })}
         required
+      />
+
+      <input
+        placeholder="Category"
+        className="border p-2 w-full"
+        value={form.category}
+        onChange={(e) => setForm({ ...form, category: e.target.value })}
       />
 
       <button
