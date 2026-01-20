@@ -17,7 +17,7 @@ export default function AddProduct() {
 
     try {
       await api.post("/api/products", {
-        name: form.name,
+        title: form.name,
         description: form.description,
         price: Number(form.price),
         category: form.category || "General"
